@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asistente de Creación de SDA v2</title>
+    <title>Asistente de Creación de SDA v3</title>
     <style>
         :root {
             --primary-color: #007bff;
@@ -110,6 +110,10 @@
             text-decoration: none;
             text-align: center;
         }
+        .btn:disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
         .btn-primary {
             background-color: var(--primary-color);
             color: var(--white);
@@ -185,206 +189,144 @@
             margin-left: 1rem;
             vertical-align: middle;
         }
+        .loader {
+            text-align: center;
+        }
+        .loader p {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .spinner {
+            border: 8px solid var(--light-gray);
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Asistente de Creación de SDA</h1>
-        
-        <ul class="progress-bar">
-            <li id="progress-1" class="active">Paso 1</li>
-            <li id="progress-2">Paso 2</li>
-            <li id="progress-3">Paso 3</li>
-            <li id="progress-4">Paso 4</li>
-        </ul>
+        <div id="wizard-container">
+            <h1>Asistente de Creación de SDA</h1>
+            
+            <ul class="progress-bar">
+                <li id="progress-1" class="active">Paso 1</li>
+                <li id="progress-2">Paso 2</li>
+                <li id="progress-3">Paso 3</li>
+                <li id="progress-4">Paso 4</li>
+            </ul>
 
-        <div id="step-1" class="step active">
-            <h2>Paso 1 de 4: ¿Qué vamos a planificar?</h2>
-            <div class="form-group">
-                <label for="title">Título provisional de la SDA</label>
-                <input type="text" id="title" value="Las estructuras de mi ciudad">
-                <small>Ej: El viaje del agua en Cantabria, Misterios de la estadística...</small>
+            <!-- Step 1: Identification -->
+            <div id="step-1" class="step active">
+                <h2>Paso 1 de 4: ¿Qué vamos a planificar?</h2>
+                <div class="form-group">
+                    <label for="title">Título provisional de la SDA</label>
+                    <input type="text" id="title" value="Las estructuras de mi ciudad">
+                </div>
+                <div class="form-group">
+                    <label for="course">Curso</label>
+                    <select id="course">
+                        <option>1º ESO</option>
+                        <option>2º ESO</option>
+                        <option selected>3º ESO</option>
+                        <option>4º ESO</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Materia</label>
+                    <select id="subject">
+                        <option selected>Tecnología y Digitalización</option>
+                    </select>
+                </div>
+                <div class="navigation-buttons">
+                    <span></span>
+                    <button class="btn btn-primary" onclick="goToStep(2)">Siguiente &gt;</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="course">Curso</label>
-                <select id="course">
-                    <option>1º ESO</option>
-                    <option>2º ESO</option>
-                    <option selected>3º ESO</option>
-                    <option>4º ESO</option>
-                    <option>1º Bachillerato</option>
-                </select>
+
+            <!-- Step 2: Curriculum -->
+            <div id="step-2" class="step">
+                <h2>Paso 2 de 4: Selecciona los elementos curriculares</h2>
+                <div>
+                    <h3>Competencias Específicas</h3>
+                    <div id="competencies-list">
+                        <label><input type="checkbox" value="CE3" checked> CE3. Aplicar de forma apropiada...</label><br>
+                        <label><input type="checkbox" value="CE5" checked> CE5. Hacer un uso responsable...</label>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <h3>Saberes Básicos</h3>
+                    <div id="saberes-list">
+                        <label><input type="checkbox" value="Estructuras" checked> Estructuras: Elementos resistentes...</label><br>
+                        <label><input type="checkbox" value="Materiales" checked> Materiales de uso técnico...</label>
+                    </div>
+                </div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">&lt; Anterior</button>
+                    <button class="btn btn-primary" onclick="goToStep(3)">Siguiente &gt;</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="subject">Materia</label>
-                <select id="subject">
-                    <option>Biología y Geología</option>
-                    <option>Física y Química</option>
-                    <option selected>Tecnología y Digitalización</option>
-                    <option>Lengua Castellana y Literatura</option>
-                </select>
+
+            <!-- Step 3: Pedagogy -->
+            <div id="step-3" class="step">
+                <h2>Paso 3 de 4: ¿Cómo vamos a enseñar?</h2>
+                <div class="form-group">
+                    <label for="methodology">Metodología Principal</label>
+                    <select id="methodology">
+                        <option selected>Aprendizaje Basado en Proyectos (ABP)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="resources">Herramientas y Recursos</label>
+                    <textarea id="resources">Ordenadores, Móviles/Tablets, Material para maquetas.</textarea>
+                </div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="goToStep(2)">&lt; Anterior</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)">Siguiente &gt;</button>
+                </div>
             </div>
-            <div class="navigation-buttons">
-                <span></span>
-                <button class="btn btn-primary" onclick="goToStep(2)">Siguiente &gt;</button>
+            
+            <!-- Step 4: Context -->
+            <div id="step-4" class="step">
+                <h2>Paso 4 de 4: El reto para tu alumnado</h2>
+                <div class="form-group">
+                    <label for="context">Descripción del Contexto</label>
+                    <textarea id="context">Grupo participativo, entorno urbano...</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="final-product">Producto Final o Reto Principal</label>
+                    <input type="text" id="final-product" value="Guía Interactiva de las Estructuras Notables de nuestra Ciudad">
+                </div>
+                <div class="form-group">
+                    <label for="sessions">Número de Sesiones</label>
+                    <input type="number" id="sessions" value="8">
+                </div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="goToStep(3)">&lt; Anterior</button>
+                    <button id="generate-btn" class="btn btn-success" onclick="generateSDA()">✨ ¡Generar Situación de Aprendizaje!</button>
+                </div>
             </div>
         </div>
 
-        <div id="step-2" class="step">
-            <h2>Paso 2 de 4: Selecciona los elementos curriculares</h2>
-            <p>Basado en 3º ESO - Tecnología y Digitalización. (Esta sección se rellenaría automáticamente desde la base de datos).</p>
-            <div>
-                <h3>Competencias Específicas</h3>
-                <label><input type="checkbox" checked> CE3. Aplicar de forma apropiada y segura distintas técnicas...</label><br>
-                <label><input type="checkbox"> CE4. Describir, representar e intercambiar ideas...</label><br>
-                <label><input type="checkbox" checked> CE5. Hacer un uso responsable y ético de la tecnología...</label>
-            </div>
-            <div style="margin-top: 1rem;">
-                <h3>Saberes Básicos</h3>
-                <label><input type="checkbox" checked> Estructuras: Elementos resistentes, tipos, esfuerzos...</label><br>
-                <label><input type="checkbox" checked> Materiales de uso técnico: Propiedades y clasificación...</label><br>
-                <label><input type="checkbox" checked> Fases de un proyecto de diseño: Diseño, planificación...</label>
-            </div>
-            <div class="navigation-buttons">
-                <button class="btn btn-secondary" onclick="goToStep(1)">&lt; Anterior</button>
-                <button class="btn btn-primary" onclick="goToStep(3)">Siguiente &gt;</button>
-            </div>
+        <!-- Loading Spinner -->
+        <div id="loading-view" class="step loader">
+            <p>La IA está diseñando tu SDA...</p>
+            <div class="spinner"></div>
+            <p>Este proceso puede tardar unos segundos.</p>
         </div>
 
-        <div id="step-3" class="step">
-            <h2>Paso 3 de 4: ¿Cómo vamos a enseñar?</h2>
-            <div class="form-group">
-                <label for="methodology">Metodología Principal</label>
-                <select id="methodology">
-                    <option selected>Aprendizaje Basado en Proyectos (ABP)</option>
-                    <option>Gamificación</option>
-                    <option>Clase Invertida</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Tipo de Agrupamiento</label><br>
-                <label><input type="radio" name="grouping"> Individual</label>
-                <label><input type="radio" name="grouping"> Parejas</label>
-                <label><input type="radio" name="grouping" checked> Pequeños Grupos (3-4)</label>
-            </div>
-            <div class="form-group">
-                <label for="resources">Herramientas y Recursos Disponibles</label>
-                <textarea id="resources">Ordenadores con conexión a internet, Móviles/Tablets para tomar fotografías y vídeos, Material para construir maquetas (cartón, madera, silicona, etc.).</textarea>
-            </div>
-            <div class="navigation-buttons">
-                <button class="btn btn-secondary" onclick="goToStep(2)">&lt; Anterior</button>
-                <button class="btn btn-primary" onclick="goToStep(4)">Siguiente &gt;</button>
-            </div>
-        </div>
-        
-        <div id="step-4" class="step">
-            <h2>Paso 4 de 4: El reto para tu alumnado</h2>
-            <div class="form-group">
-                <label for="context">Descripción del Contexto</label>
-                <textarea id="context">El grupo de 3º de ESO es un grupo participativo y familiarizado con el uso básico de la tecnología, aunque con menos experiencia en el trabajo autónomo por proyectos. Se ubica en un instituto público en un entorno urbano...</textarea>
-            </div>
-            <div class="form-group">
-                <label>Producto Final o Reto Principal</label>
-                <small>La IA te sugiere varias ideas de proyecto. Elige una o escribe la tuya.</small>
-
-                <div class="radio-option">
-                    <label><input type="radio" name="product" value="1" checked onclick="toggleCustomProduct(false)"> Opción 1: "Guía Interactiva de Estructuras"</label>
-                    <small>Los alumnos crean un sitio web o presentación donde analizan 3 estructuras de la ciudad y presentan la maqueta de una de ellas.</small>
-                </div>
-                <div class="radio-option">
-                    <label><input type="radio" name="product" value="2" onclick="toggleCustomProduct(false)"> Opción 2: "Documental: Ingenieros Urbanos"</label>
-                    <small>Los alumnos graban un breve documental (5-7 min) explicando los tipos de estructuras, mostrando ejemplos reales y el proceso de construcción de su maqueta.</small>
-                </div>
-                <div class="radio-option">
-                     <label><input type="radio" name="product" value="custom" onclick="toggleCustomProduct(true)"> Otra (introdúcela tú mismo):</label>
-                </div>
-                <div id="custom-product-area">
-                    <textarea placeholder="Describe aquí tu propia idea de producto final o reto..."></textarea>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="sessions">Número de Sesiones Estimadas</label>
-                <input type="number" id="sessions" value="8">
-            </div>
-            <div class="navigation-buttons">
-                <button class="btn btn-secondary" onclick="goToStep(3)">&lt; Anterior</button>
-                <button class="btn btn-success" onclick="generateResult()">✨ ¡Generar Situación de Aprendizaje!</button>
-            </div>
-        </div>
-
+        <!-- Result Page -->
         <div id="result-page" class="step">
-            <div class="action-bar">
-                <button class="btn btn-primary">⬇️ Descargar PDF</button>
-                <button class="btn btn-secondary">✏️ Editar</button>
-            </div>
-
-            <h2>Ciudad de Titanes: Descifrando las estructuras que nos sostienen</h2>
-
-            <h3>1. Justificación y Contextualización</h3>
-            <p>Vivimos rodeados de estructuras: puentes que cruzamos, pabellones donde hacemos deporte... Esta SDA conecta los saberes abstractos de la tecnología con el entorno tangible del alumnado, fomentando la autonomía y el pensamiento crítico.</p>
-            
-            <h3>2. Conexión Curricular</h3>
-            <h4>Competencias Específicas</h4>
-            <ul>
-                <li><strong>CE3.</strong> Aplicar de forma apropiada y segura distintas técnicas y conocimientos interdisciplinares utilizando operadores, sistemas tecnológicos y herramientas, teniendo en cuenta la planificación y el diseño previo, para construir o fabricar soluciones tecnológicas y sostenibles que den respuesta a necesidades en diferentes contextos.</li>
-                <li><strong>CE5.</strong> Hacer un uso responsable y ético de la tecnología, analizando sus repercusiones individuales, sociales y medioambientales, aplicando criterios de sostenibilidad y valorando las aportaciones y el impacto de la tecnología en la sociedad y en la consecución de los Objetivos de Desarrollo Sostenible, para promover un desarrollo tecnológico saludable, sostenible e igualitario.</li>
-            </ul>
-             <h4>Criterios de Evaluación</h4>
-            <ul>
-                <li><strong>3.1.</strong> Construir o fabricar prototipos, de forma individual o en equipo, aplicando técnicas de fabricación manual y digital, a partir de un diseño previo y utilizando los recursos y herramientas apropiados de manera segura.</li>
-                <li><strong>5.1.</strong> Argumentar la elección de soluciones tecnológicas a problemas o necesidades, valorando criterios de eficiencia, sostenibilidad, accesibilidad e impacto social.</li>
-            </ul>
-            <h4>Saberes Básicos</h4>
-             <ul>
-                <li>Estructuras: Elementos resistentes, tipos, esfuerzos (tracción, compresión, flexión, torsión y cortadura).</li>
-                <li>Materiales de uso técnico: Propiedades y clasificación (madera, metales, plásticos, etc.). Impacto medioambiental.</li>
-                <li>Fases de un proyecto de diseño: Diseño, planificación y fabricación.</li>
-            </ul>
-
-
-            <h3>3. Producto Final y Desafío</h3>
-            <p>El reto será crear una <strong>"Guía Interactiva de las Estructuras Notables de nuestra Ciudad"</strong>, incluyendo análisis de 3 estructuras reales, una maqueta a escala y una presentación final.</p>
-            
-            <h3>5. Secuencia de Actividades (8 Sesiones)</h3>
-            <p><strong>Sesión 1: "El Desafío de los Titanes"</strong> <button class="btn btn-primary presentation-btn">🖥️ Generar Presentación</button><br>
-            Presentación del proyecto, debate inicial y formación de grupos.</p>
-            
-            <h3>7. Escenario de Evaluación</h3>
-            <p>La evaluación será continua. La calificación final se basará en la siguiente rúbrica:</p>
-            
-            <h4>Rúbrica de Evaluación del Proyecto</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Criterio</th>
-                        <th>Iniciado (1-4)</th>
-                        <th>En Proceso (5-6)</th>
-                        <th>Conseguido (7-8)</th>
-                        <th>Experto (9-10)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Análisis de Estructuras</strong></td>
-                        <td>Identifica estructuras de forma superficial.</td>
-                        <td>El análisis es genérico o poco preciso.</td>
-                        <td>Analiza correctamente 3 estructuras.</td>
-                        <td>El análisis es detallado y usa vocabulario técnico.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Construcción de Maqueta</strong></td>
-                        <td>La maqueta es inestable o inacabada.</td>
-                        <td>La maqueta es estable pero poco precisa.</td>
-                        <td>La maqueta es estable, funcional y precisa.</td>
-                        <td>La maqueta demuestra un alto nivel de detalle.</td>
-                    </tr>
-                </tbody>
-            </table>
-             <div class="navigation-buttons">
-                <button class="btn btn-secondary" onclick="restart()"> &lt; Empezar de Nuevo</button>
-            </div>
+            <!-- Content will be injected here by JavaScript -->
         </div>
     </div>
 
@@ -393,15 +335,10 @@
 
         function goToStep(stepNumber) {
             document.getElementById('step-' + currentStep).classList.remove('active');
-            if(document.getElementById('progress-' + currentStep)) {
-                document.getElementById('progress-' + currentStep).classList.remove('active');
-            }
+            document.getElementById('progress-' + currentStep).classList.remove('active');
 
             currentStep = stepNumber;
-            const nextStepElement = document.getElementById('step-' + currentStep);
-            if(nextStepElement) {
-                nextStepElement.classList.add('active');
-            }
+            document.getElementById('step-' + currentStep).classList.add('active');
             
             for(let i = 1; i <= 4; i++) {
                 const progressElement = document.getElementById('progress-' + i);
@@ -415,29 +352,109 @@
             }
         }
 
-        function generateResult() {
-            document.getElementById('step-' + currentStep).classList.remove('active');
-            document.querySelector('.progress-bar').style.display = 'none';
-            document.querySelector('h1').style.display = 'none';
+        async function generateSDA() {
+            // 1. Show loading spinner and disable button
+            document.getElementById('wizard-container').style.display = 'none';
+            document.getElementById('loading-view').classList.add('active');
+            
+            // 2. Gather all data from the form
+            const sdaData = {
+                title: document.getElementById('title').value,
+                course: document.getElementById('course').value,
+                subject: document.getElementById('subject').value,
+                competencies: Array.from(document.querySelectorAll('#competencies-list input:checked')).map(el => el.value),
+                saberes: Array.from(document.querySelectorAll('#saberes-list input:checked')).map(el => el.value),
+                methodology: document.getElementById('methodology').value,
+                product: document.getElementById('final-product').value,
+                contextDesc: document.getElementById('context').value,
+                sessions: document.getElementById('sessions').value
+            };
 
-            const resultPage = document.getElementById('result-page');
-            resultPage.classList.add('active');
-        }
+            try {
+                // 3. Call our Netlify Function
+                const response = await fetch('/.netlify/functions/generate-sda', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sdaData)
+                });
 
-        function toggleCustomProduct(isCustom) {
-            const customArea = document.getElementById('custom-product-area');
-            if (isCustom) {
-                customArea.style.display = 'block';
-            } else {
-                customArea.style.display = 'none';
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // 4. Build the result HTML and display it
+                buildResultPage(result);
+
+            } catch (error) {
+                console.error("Error calling Netlify function:", error);
+                document.getElementById('result-page').innerHTML = `
+                    <h2>Error en la Generación</h2>
+                    <p>Lo sentimos, ha ocurrido un error al contactar con la IA. Por favor, inténtalo de nuevo más tarde.</p>
+                    <p><i>Detalles del error: ${error.message}</i></p>
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary" onclick="restart()">&lt; Empezar de Nuevo</button>
+                    </div>`;
+            } finally {
+                // 5. Hide loading and show result
+                document.getElementById('loading-view').classList.remove('active');
+                document.getElementById('result-page').classList.add('active');
             }
         }
         
-        function restart() {
-            // This is a simple way to restart the demo
-            window.location.reload();
+        function buildResultPage(data) {
+            const resultContainer = document.getElementById('result-page');
+
+            // Helper to build lists
+            const buildList = (items) => `<ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+            
+            // Helper to build rubric
+            const buildRubric = (rubricItems) => {
+                let table = `<table><thead><tr><th>Criterio</th><th>Iniciado (1-4)</th><th>En Proceso (5-6)</th><th>Conseguido (7-8)</th><th>Experto (9-10)</th></tr></thead><tbody>`;
+                rubricItems.forEach(item => {
+                    table += `<tr><td><strong>${item.criteria}</strong></td>${item.levels.map(level => `<td>${level}</td>`).join('')}</tr>`;
+                });
+                table += `</tbody></table>`;
+                return table;
+            };
+
+            resultContainer.innerHTML = `
+                <div class="action-bar">
+                    <button class="btn btn-primary">⬇️ Descargar PDF</button>
+                    <button class="btn btn-secondary">✏️ Editar</button>
+                </div>
+                <h2>${data.title}</h2>
+                <h3>1. Justificación y Contextualización</h3>
+                <p>${data.justification}</p>
+                
+                <h3>2. Conexión Curricular</h3>
+                <h4>Competencias Específicas</h4>
+                ${buildList(data.curricularConnection.competencies)}
+                <h4>Criterios de Evaluación</h4>
+                ${buildList(data.curricularConnection.criteria)}
+                <h4>Saberes Básicos</h4>
+                ${buildList(data.curricularConnection.saberes)}
+                
+                <h3>3. Producto Final y Desafío</h3>
+                <p>${data.finalProduct}</p>
+                
+                <h3>5. Secuencia de Actividades</h3>
+                ${data.activities.map(act => `<p><strong>${act.title}</strong> <button class="btn btn-primary presentation-btn">🖥️ Generar Presentación</button><br>${act.description}</p>`).join('')}
+                
+                <h3>7. Escenario de Evaluación</h3>
+                <h4>Rúbrica de Evaluación del Proyecto</h4>
+                ${buildRubric(data.rubric)}
+                
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="restart()">&lt; Empezar de Nuevo</button>
+                </div>
+            `;
         }
 
+        function restart() {
+            window.location.reload();
+        }
     </script>
 </body>
 </html>
